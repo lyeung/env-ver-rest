@@ -1,6 +1,6 @@
 # env-ver-rest
 
-FIXME
+env-ver-rest is a backend REST to support env-ver project.
 
 ## Prerequisites
 
@@ -16,4 +16,4 @@ To start a web server for the application, run:
 
 ## License
 
-Copyright © 2017 FIXME
+Copyright © 2017 Lenming Yeung
