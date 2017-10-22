@@ -4,50 +4,19 @@
             [compojure.handler :as handler]
             [compojure.route :as route]
             [clojure.java.jdbc :as sql]
+            [env-ver-rest.dbschema :as dbschema]
+            [env-ver-rest.db :as db]
             [taoensso.carmine :as car :refer (wcar)]
             ;;            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :as middleware]
             [ring.util.response :refer [response]]))
 
-(def db-config
-  {:classname "org.h2.Driver"
-   :subprotocol "h2"
-   :subname "mem:documents"
-   :user ""
-   :password ""})
 
-(defn pool [config]
-  (let [cpds (doto (ComboPooledDataSource.)
-               (.setDriverClass (:classname config))
-               (.setJdbcUrl (str "jdbc:" (:subprotocol config) ":" (:subname config)))
-               (.setUser (:user config))
-               (.setPassword (:password config))
-               (.setMaxPoolSize 6)
-               (.setMinPoolSize 1)
-               (.setInitialPoolSize 1))]
-    {:datasource cpds}))
-
-(def pooled-db (delay (pool db-config)))
-
-(defn db-conn [] @pooled-db)
 (defn uuid[] (str (java.util.UUID/randomUUID)))
-
-(sql/with-connection (db-conn)
-  (sql/create-table :env_ver
-                    [:id "varchar(256)" "primary key"]
-                    [:name "varchar(1024)"]
-                    [:version "varchar(3)"]
-                    [:status "varchar(30)"]
-                    [:last_known "varchar(100)"])
-(comment  (sql/insert-record :env_ver
-                     {:id (uuid)
-                      :name "uat"
-                      :version "10"
-                      :status "ok"
-                      :last_known "100"})))
+(dbschema/init db/db-conn)
 
 (defn find-env-ver [id]
-  (sql/with-connection (db-conn)
+  (sql/with-connection (db/db-conn)
     (sql/with-query-results results
       ["select * from env_ver where id=?" id]
       (cond
@@ -55,7 +24,7 @@
         :else (response (first results))))))
 
 (defn find-env-ver-by-name [name]
-  (sql/with-connection (db-conn)
+  (sql/with-connection (db/db-conn)
     (sql/with-query-results results
       ["select * from env_ver where name=?" name]
       (cond
@@ -65,28 +34,37 @@
 
 (defn create-env-ver [body]
   (let [id (uuid)]
-    (sql/with-connection (db-conn)
+    (println (str "body" body))
+    (sql/with-connection (db/db-conn)
       (let [record (assoc body "id" id)]
         (sql/insert-record :env_ver record)))
     (find-env-ver id)))
 
 (defn update-env-ver [name body]
-  (sql/with-connection (db-conn)
+  (sql/with-connection (db/db-conn)
     (sql/update-values :env_ver ["name=?" name] body))
   (find-env-ver name))
 
 (defn find-all []
   (response
-  (sql/with-connection (db-conn)
+  (sql/with-connection (db/db-conn)
     (sql/with-query-results results
       ["select * from env_ver"]
 ;;      (println results)
         (into [] results)))))
 
 (defn delete-env-ver [name]
-  (sql/with-connection (db-conn)
+  (sql/with-connection (db/db-conn)
     (sql/delete-rows :env_ver ["name=?" name]))
   {:status 204})
+
+(defn delete-all []
+  (sql/with-connection (db/db-conn)
+    (sql/delete-rows :env_ver ["id in (select id from env_ver)"])))
+
+(defn drop-schema []
+  (sql/with-connection (db/db-conn)
+    (sql/drop-table :env_ver)))
 
 (defroutes app-routes
   (context "/env-vers" []
@@ -109,3 +87,4 @@
   (-> (handler/api app-routes)
       (middleware/wrap-json-body)
       (middleware/wrap-json-response)))
+  

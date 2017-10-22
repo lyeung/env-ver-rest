@@ -1,0 +1,6 @@
+{:db-classname "org.h2.Driver"
+ :db-subprotocol "h2"
+ :db-subname "mem:env-ver"
+ :db-user ""
+ :db-password ""}
+
