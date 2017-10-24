@@ -3,11 +3,13 @@
             [ring.mock.request :as mock]
             [cheshire.core :as cheshire]
             [env-ver-rest.handler :refer :all]
+            [env-ver-rest.dao :as dao]
+            [env-ver-rest.db :as db]
             [ring.util.response :refer [response]]))
 
 (defn fixtures [test-fn]
   (test-fn)
-  (delete-all))
+  (dao/delete-all db/db-conn))
 
 (use-fixtures :each fixtures)
 
