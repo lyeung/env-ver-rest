@@ -1,6 +1,6 @@
 (ns env-ver-rest.core
  (:gen-class))
 
-(defn -main
+(defn main
   []
   (println "env-ver-rest"))
