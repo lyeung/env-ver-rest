@@ -20,7 +20,9 @@
 ;  :main env-ver-rest.main
   :deploy-repositories [
                         ["internal-snapshots"
-                         "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/internal-snapshots"]
+                         {:url "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/internal-snapshots"
+                          :username :env
+                          :password :env}]
                         ["internal-releases"
                          "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/internal-releases"]
                           ]
