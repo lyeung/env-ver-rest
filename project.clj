@@ -20,9 +20,9 @@
 ;  :main env-ver-rest.main
   :deploy-repositories [
                         ["internal-snapshots"
-                         "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/snapshots"]
+                         "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/internal-snapshots"]
                         ["internal-releases"
-                         "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/releases"]
+                         "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/internal-releases"]
                           ]
   :ring {:handler env-ver-rest.handler/app}
   :profiles
