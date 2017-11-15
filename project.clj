@@ -18,6 +18,12 @@
 ;                      "deploy" "uberjar-deploy"}
 ;  :main ^:skip-aot env-ver-rest.core
 ;  :main env-ver-rest.main
+  :deploy-repositories [
+                        ["snapshots"
+                         "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/snapshots"]
+                        ["releases"
+                         "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/releases"]
+                          ]
   :ring {:handler env-ver-rest.handler/app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
@@ -30,6 +36,6 @@
    :uberjar {:aot :all}
    }
 
-   :target-path "target/%s/"
+;   :target-path "target/%s/"
            
   )
