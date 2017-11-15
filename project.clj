@@ -19,9 +19,9 @@
 ;  :main ^:skip-aot env-ver-rest.core
 ;  :main env-ver-rest.main
   :deploy-repositories [
-                        ["snapshots"
+                        ["internal-snapshots"
                          "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/snapshots"]
-                        ["releases"
+                        ["internal-releases"
                          "http://lyeung-ci-dev-nexus2:8081/nexus/content/repositories/releases"]
                           ]
   :ring {:handler env-ver-rest.handler/app}
